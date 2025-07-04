@@ -465,26 +465,72 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Nazwa Przedmiotu</th>
+                            <th>Nazwa</th>
+                            <th>Ilość</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- 15 rows for inventory items -->
-                        <tr><td><input type="text" placeholder="Przedmiot 1" id="item-0" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 2" id="item-1" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 3" id="item-2" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 4" id="item-3" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 5" id="item-4" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 6" id="item-5" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 7" id="item-6" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 8" id="item-7" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 9" id="item-8" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 10" id="item-9" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 11" id="item-10" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 12" id="item-11" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 13" id="item-12" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 14" id="item-13" oninput="saveState()"></td></tr>
-                        <tr><td><input type="text" placeholder="Przedmiot 15" id="item-14" oninput="saveState()"></td></tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 1" data-item-type="name" data-item-index="0" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="0" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 2" data-item-type="name" data-item-index="1" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="1" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 3" data-item-type="name" data-item-index="2" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="2" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 4" data-item-type="name" data-item-index="3" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="3" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 5" data-item-type="name" data-item-index="4" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="4" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 6" data-item-type="name" data-item-index="5" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="5" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 7" data-item-type="name" data-item-index="6" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="6" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 8" data-item-type="name" data-item-index="7" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="7" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 9" data-item-type="name" data-item-index="8" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="8" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 10" data-item-type="name" data-item-index="9" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="9" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 11" data-item-type="name" data-item-index="10" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="10" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 12" data-item-type="name" data-item-index="11" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="11" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 13" data-item-type="name" data-item-index="12" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="12" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 14" data-item-type="name" data-item-index="13" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="13" oninput="saveState()" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="Przedmiot 15" data-item-type="name" data-item-index="14" oninput="saveState()"></td>
+                            <td><input type="number" placeholder="Ilość" data-item-type="quantity" data-item-index="14" oninput="saveState()" min="0"></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -688,13 +734,20 @@
                 }
             });
 
-            // Save Ekwipunek table inputs
-            const ekwipunekInputs = document.querySelectorAll('#ekwipunek table input[type="text"]');
+            // Save Ekwipunek table inputs (now two columns: name and quantity)
             const ekwipunekItems = [];
-            ekwipunekInputs.forEach(input => {
-                ekwipunekItems.push(input.value);
-            });
+            for (let i = 0; i < 15; i++) { // Assuming 15 rows for inventory
+                const nameInput = document.querySelector(`input[data-item-type="name"][data-item-index="${i}"]`);
+                const quantityInput = document.querySelector(`input[data-item-type="quantity"][data-item-index="${i}"]`);
+                if (nameInput && quantityInput) {
+                    ekwipunekItems.push({
+                        name: nameInput.value,
+                        quantity: quantityInput.value
+                    });
+                }
+            }
             state['ekwipunek-items'] = ekwipunekItems;
+
 
             // Save Skille table inputs
             const skilleInputs = document.querySelectorAll('#skille table input[type="text"]');
@@ -778,12 +831,16 @@
                 }
             });
 
-            // Load Ekwipunek table inputs
+            // Load Ekwipunek table inputs (now two columns: name and quantity)
             if (state['ekwipunek-items']) {
-                const ekwipunekInputs = document.querySelectorAll('#ekwipunek table input[type="text"]');
-                state['ekwipunek-items'].forEach((value, index) => {
-                    if (ekwipunekInputs[index]) {
-                        ekwipunekInputs[index].value = value;
+                state['ekwipunek-items'].forEach((item, index) => {
+                    const nameInput = document.querySelector(`input[data-item-type="name"][data-item-index="${index}"]`);
+                    const quantityInput = document.querySelector(`input[data-item-type="quantity"][data-item-index="${index}"]`);
+                    if (nameInput && item.name !== undefined) {
+                        nameInput.value = item.name;
+                    }
+                    if (quantityInput && item.quantity !== undefined) {
+                        quantityInput.value = item.quantity;
                     }
                 });
             }
