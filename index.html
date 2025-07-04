@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karta Postaci D&D</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better aesthetics and specific layout needs */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better content flow */
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .character-sheet-container {
+            background-color: #ffffff;
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+            width: 100%;
+            max-width: 900px; /* Max width for desktop */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .tab-button {
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            color: #4b5563; /* Gray text */
+        }
+        .tab-button.active {
+            border-color: #6366f1; /* Indigo for active tab */
+            color: #312e81; /* Darker indigo text */
+            background-color: #eef2ff; /* Light indigo background */
+        }
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .attribute-input {
+            width: 4rem; /* Fixed width for attribute inputs */
+            text-align: center;
+        }
+        .digits-group {
+            display: flex;
+            gap: 0.25rem; /* Small gap between digit boxes */
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            border: 1px solid #e5e7eb; /* Add a subtle border around the group */
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+        }
+        .digit-box {
+            width: 1.5rem; /* Small fixed width for each digit */
+            height: 1.5rem;
+            border: 1px solid #d1d5db; /* Light gray border */
+            border-radius: 0.25rem; /* Slightly rounded corners */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.875rem; /* Smaller font size */
+            background-color: #ffffff; /* White background */
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .digit-box.selected {
+            background-color: #6366f1; /* Indigo when selected */
+            color: white;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); /* Ring effect */
+        }
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .skill-input {
+            flex-grow: 1; /* Allow input to take available space */
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.9rem;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); /* Inner shadow for input */
+        }
+        .skill-level-group {
+            display: flex;
+            gap: 0.25rem; /* Small gap between digit boxes */
+            flex-wrap: wrap;
+            margin-left: auto; /* Push to the right */
+        }
+        .skill-level-group .digit-box {
+            width: 1.25rem; /* Slightly smaller for skill levels */
+            height: 1.25rem;
+            font-size: 0.75rem;
+        }
+        textarea {
+            min-height: 150px; /* Minimum height for text areas */
+            resize: vertical; /* Allow vertical resizing */
+        }
+        .table-responsive {
+            overflow-x: auto; /* Enable horizontal scrolling for tables on small screens */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            min-width: 600px; /* Ensure table is wide enough to scroll on small screens if needed */
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #e5e7eb; /* Light gray border for table cells */
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .data-table th {
+            background-color: #f3f4f6; /* Light gray background for table headers */
+            font-weight: 600;
+            color: #4b5563;
+        }
+        .data-table td input[type="text"],
+        .data-table td input[type="number"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: none; /* Remove border from input inside table cell */
+            background-color: transparent; /* Transparent background */
+            box-shadow: none; /* No shadow */
+        }
+        .data-table td input[type="text"]:focus,
+        .data-table td input[type="number"]:focus {
+            outline: none; /* Remove outline on focus */
+            background-color: #eff6ff; /* Light blue on focus */
+        }
+
+        @media (max-width: 768px) {
+            .tab-buttons {
+                flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+            }
+            .tab-button {
+                flex-grow: 1; /* Make buttons take equal width */
+                text-align: center;
+            }
+            .character-sheet-container {
+                padding: 10px;
+            }
+            /* Adjust font sizes for better readability on small screens */
+            body { font-size: 0.9rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.1rem; }
+            .tab-button { padding: 0.75rem 1rem; font-size: 0.9rem; }
+            .digit-box { width: 1.2rem; height: 1.2rem; font-size: 0.75rem; }
+            /* Adjusted size for skill level digit boxes to prevent wrapping */
+            .skill-level-group .digit-box {
+                width: 1rem; /* Reduced width */
+                height: 1rem; /* Reduced height */
+                font-size: 0.65rem; /* Adjusted font size */
+            }
+            .data-table th, .data-table td { padding: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="character-sheet-container">
+        <!-- Tab Buttons -->
+        <div class="tab-buttons flex border-b border-gray-200 bg-gray-50 rounded-t-xl">
+            <button class="tab-button active" onclick="openTab(event, 'informacje')">Informacje</button>
+            <button class="tab-button" onclick="openTab(event, 'uzbrojenie')">Uzbrojenie</button>
+            <button class="tab-button" onclick="openTab(event, 'umiejetnosci')">Umiejętności</button>
+            <button class="tab-button" onclick="openTab(event, 'ekwipunek')">Ekwipunek</button>
+            <button class="tab-button" onclick="openTab(event, 'skille')">Skille</button>
+        </div>
+
+        <!-- Tab Content: Informacje -->
+        <div id="informacje" class="tab-content active">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Informacje o Postaci</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- First Column: Basic Info -->
+                <div class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Imię:</label>
+                        <input type="text" id="name" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                    </div>
+                    <div>
+                        <label for="race" class="block text-sm font-medium text-gray-700 mb-1">Rasa:</label>
+                        <input type="text" id="race" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                    </div>
+                    <div>
+                        <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">Płeć:</label>
+                        <input type="text" id="gender" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                    </div>
+                    <div>
+                        <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Wiek:</label>
+                        <input type="number" id="age" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                    </div>
+                </div>
+
+                <!-- Second Column: Attributes -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Cechy:</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4">
+                        <div class="flex flex-col items-center">
+                            <label for="sila" class="text-sm font-medium text-gray-700 mb-1">SIŁ</label>
+                            <input type="number" id="sila" class="attribute-input p-2 border border-gray-300 rounded-md text-center focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" min="0" max="99" oninput="saveState()">
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <label for="zrecznosc" class="text-sm font-medium text-gray-700 mb-1">ZR</label>
+                            <input type="number" id="zrecznosc" class="attribute-input p-2 border border-gray-300 rounded-md text-center focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" min="0" max="99" oninput="saveState()">
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <label for="inteligencja" class="text-sm font-medium text-gray-700 mb-1">INT</label>
+                            <input type="number" id="inteligencja" class="attribute-input p-2 border border-gray-300 rounded-md text-center focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" min="0" max="99" oninput="saveState()">
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <label for="kondycja" class="text-sm font-medium text-gray-700 mb-1">KON</label>
+                            <input type="number" id="kondycja" class="attribute-input p-2 border border-gray-300 rounded-md text-center focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" min="0" max="99" oninput="saveState()">
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <label for="bystrosc" class="text-sm font-medium text-gray-700 mb-1">BYS</label>
+                            <input type="number" id="bystrosc" class="attribute-input p-2 border border-gray-300 rounded-md text-center focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" min="0" max="99" oninput="saveState()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health, Luck, Sanity -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Punkty Zdrowia:</h3>
+                    <div id="health-points" class="digits-group" data-group="health">
+                        <!-- Digits 00-99 will be generated here by JS -->
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Fart:</h3>
+                    <div id="luck" class="digits-group" data-group="luck">
+                        <!-- Digits 00-99 will be generated here by JS -->
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Poczytalność:</h3>
+                    <div id="sanity" class="digits-group" data-group="sanity">
+                        <!-- Digits 00-99 will be generated here by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Uzbrojenie -->
+        <div id="uzbrojenie" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Uzbrojenie</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="physical-armor" class="block text-sm font-medium text-gray-700 mb-1">Pancerz Fizyczny:</label>
+                    <input type="text" id="physical-armor" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                </div>
+                <div>
+                    <label for="magical-armor" class="block text-sm font-medium text-gray-700 mb-1">Pancerz Magiczny:</label>
+                    <input type="text" id="magical-armor" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="headwear" class="block text-sm font-medium text-gray-700 mb-1">Nakrycie Głowy:</label>
+                    <input type="text" id="headwear" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                </div>
+                <div>
+                    <label for="necklace" class="block text-sm font-medium text-gray-700 mb-1">Naszyjnik:</label>
+                    <input type="text" id="necklace" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                </div>
+                <div>
+                    <label for="ring" class="block text-sm font-medium text-gray-700 mb-1">Pierscień:</label>
+                    <input type="text" id="ring" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                </div>
+                <div>
+                    <label for="chest" class="block text-sm font-medium text-gray-700 mb-1">Klatka Piersiowa:</label>
+                    <input type="text" id="chest" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                </div>
+                <div>
+                    <label for="pants" class="block text-sm font-medium text-gray-700 mb-1">Spodnie:</label>
+                    <input type="text" id="pants" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                </div>
+                <div>
+                    <label for="boots" class="block text-sm font-medium text-gray-700 mb-1">Buty:</label>
+                    <input type="text" id="boots" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                </div>
+                <div class="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="weapon1" class="block text-sm font-medium text-gray-700 mb-1">Broń 1:</label>
+                        <input type="text" id="weapon1" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                    </div>
+                    <div>
+                        <label for="weapon2" class="block text-sm font-medium text-gray-700 mb-1">Broń 2:</label>
+                        <input type="text" id="weapon2" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Umiejętności -->
+        <div id="umiejetnosci" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Umiejętności</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-8">
+                <!-- Skills with number input (0-99) - Left Column (11 items) -->
+                <div class="space-y-3">
+                    <div class="skill-item">
+                        <label for="celnosc" class="text-gray-700 w-32">Celność</label>
+                        <input type="number" id="celnosc" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="unik-obrona" class="text-gray-700 w-32">Unik/obrona</label>
+                        <input type="number" id="unik-obrona" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="skradanie" class="text-gray-700 w-32">Skradanie się</label>
+                        <input type="number" id="skradanie" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="perswazja" class="text-gray-700 w-32">Perswazja</label>
+                        <input type="number" id="perswazja" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="gadanina" class="text-gray-700 w-32">Gadanina</label>
+                        <input type="number" id="gadanina" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="czytanie-bibliotek" class="text-gray-700 w-32">Czytanie bibliotek</label>
+                        <input type="number" id="czytanie-bibliotek" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="psychoanaliza" class="text-gray-700 w-32">Psychoanaliza</label>
+                        <input type="number" id="psychoanaliza" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="tropienie" class="text-gray-700 w-32">Tropienie</label>
+                        <input type="number" id="tropienie" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="ukrywanie" class="text-gray-700 w-32">Ukrywanie</label>
+                        <input type="number" id="ukrywanie" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="zastraszanie" class="text-gray-700 w-32">Zastraszanie</label>
+                        <input type="number" id="zastraszanie" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="oszustwo" class="text-gray-700 w-32">Oszustwo</label>
+                        <input type="number" id="oszustwo" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                </div>
+
+                <!-- Skills with number input (0-99) - Right Column (12 items) -->
+                <div class="space-y-3">
+                    <div class="skill-item">
+                        <label for="rozumienie-zwierzat" class="text-gray-700 w-32">Rozumienie zwierząt</label>
+                        <input type="number" id="rozumienie-zwierzat" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="rzemioslo" class="text-gray-700 w-32">Rzemiosło</label>
+                        <input type="number" id="rzemioslo" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="zlodziejstwo" class="text-gray-700 w-32">Złodziejstwo</label>
+                        <input type="number" id="zlodziejstwo" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="handel" class="text-gray-700 w-32">Handel</label>
+                        <input type="number" id="handel" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="historia" class="text-gray-700 w-32">Historia</label>
+                        <input type="number" id="historia" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="nawigacja" class="text-gray-700 w-32">Nawigacja</label>
+                        <input type="number" id="nawigacja" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="spostrzegawczosc" class="text-gray-700 w-32">Spostrzegawczość</label>
+                        <input type="number" id="spostrzegawczosc" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="urok-osobisty" class="text-gray-700 w-32">Urok osobisty</label>
+                        <input type="number" id="urok-osobisty" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="alchemia" class="text-gray-700 w-32">Alchemia</label>
+                        <input type="number" id="alchemia" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="nasluchiwanie" class="text-gray-700 w-32">Nasłuchiwanie</label>
+                        <input type="number" id="nasluchiwanie" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="wyczuwanie-magii" class="text-gray-700 w-32">Wyczuwanie magii</label>
+                        <input type="number" id="wyczuwanie-magii" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                    <div class="skill-item">
+                        <label for="zaklinanie" class="text-gray-700 w-32">Zaklinanie</label>
+                        <input type="number" id="zaklinanie" class="skill-input" min="0" max="99" oninput="saveState()">
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-lg font-semibold mb-3 text-gray-800">Umiejętności z Poziomami:</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                <!-- Skills with 0-4 digit boxes -->
+                <div class="space-y-3">
+                    <div class="skill-item">
+                        <label class="text-gray-700 w-32">Sztuka walki</label>
+                        <div id="sztuka-walki-level" class="skill-level-group" data-group="sztuka-walki"></div>
+                    </div>
+                    <div class="skill-item">
+                        <label class="text-gray-700 w-32">Łucznictwo</label>
+                        <div id="lucznictwo-level" class="skill-level-group" data-group="lucznictwo"></div>
+                    </div>
+                    <div class="skill-item">
+                        <label class="text-gray-700 w-32">Pirokineza</label>
+                        <div id="pirokineza-level" class="skill-level-group" data-group="pirokineza"></div>
+                    </div>
+                    <div class="skill-item">
+                        <label class="text-gray-700 w-32">Hydrozofia</label>
+                        <div id="hydrozofia-level" class="skill-level-group" data-group="hydrozofia"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="skill-item">
+                        <label class="text-gray-700 w-32">Aeroturgia</label>
+                        <div id="aeroturgia-level" class="skill-level-group" data-group="aeroturgia"></div>
+                    </div>
+                    <div class="skill-item">
+                        <label class="text-gray-700 w-32">Geomancja</label>
+                        <div id="geomancja-level" class="skill-level-group" data-group="geomancja"></div>
+                    </div>
+                    <div class="skill-item">
+                        <label class="text-gray-700 w-32">Nekromancja</label>
+                        <div id="nekromancja-level" class="skill-level-group" data-group="nekromancja"></div>
+                    </div>
+                    <div class="skill-item">
+                        <label class="text-gray-700 w-32">Polimorfia</label>
+                        <div id="polimorfia-level" class="skill-level-group" data-group="polimorfia"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Ekwipunek -->
+        <div id="ekwipunek" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Ekwipunek</h2>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nazwa Przedmiotu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 15 rows for inventory items -->
+                        <tr><td><input type="text" placeholder="Przedmiot 1" id="item-0" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 2" id="item-1" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 3" id="item-2" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 4" id="item-3" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 5" id="item-4" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 6" id="item-5" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 7" id="item-6" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 8" id="item-7" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 9" id="item-8" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 10" id="item-9" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 11" id="item-10" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 12" id="item-11" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 13" id="item-12" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 14" id="item-13" oninput="saveState()"></td></tr>
+                        <tr><td><input type="text" placeholder="Przedmiot 15" id="item-14" oninput="saveState()"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Content: Skille -->
+        <div id="skille" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Skille / Zdolności</h2>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Lvl</th>
+                            <th>Nazwa</th>
+                            <th>Działanie</th>
+                            <th>Obrażenia</th>
+                            <th>Typ</th>
+                            <th>Koszt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 6 rows for skills/abilities -->
+                        <tr>
+                            <td><input type="text" placeholder="" data-row="0" data-col="0" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="0" data-col="1" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="0" data-col="2" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="0" data-col="3" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="0" data-col="4" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="0" data-col="5" oninput="saveState()"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="" data-row="1" data-col="0" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="1" data-col="1" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="1" data-col="2" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="1" data-col="3" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="1" data-col="4" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="1" data-col="5" oninput="saveState()"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="" data-row="2" data-col="0" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="2" data-col="1" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="2" data-col="2" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="2" data-col="3" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="2" data-col="4" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="2" data-col="5" oninput="saveState()"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="" data-row="3" data-col="0" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="3" data-col="1" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="3" data-col="2" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="3" data-col="3" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="3" data-col="4" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="3" data-col="5" oninput="saveState()"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="" data-row="4" data-col="0" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="4" data-col="1" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="4" data-col="2" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="4" data-col="3" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="4" data-col="4" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="4" data-col="5" oninput="saveState()"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="" data-row="5" data-col="0" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="5" data-col="1" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="5" data-col="2" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="5" data-col="3" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="5" data-col="4" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="5" data-col="5" oninput="saveState()"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to handle tab switching
+        function openTab(evt, tabName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tab-content" and hide them
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+
+            // Get all elements with class="tab-button" and remove the "active" class
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        /**
+         * Generates digit boxes for Health, Luck, and Sanity (00-99).
+         * Allows only one selection per group.
+         * @param {string} containerId The ID of the container element.
+         * @param {string} groupName The name of the group for selection logic.
+         */
+        function generateMainDigitBoxes(containerId, groupName) {
+            const container = document.getElementById(containerId);
+            if (!container) return; // Exit if container not found
+
+            for (let i = 0; i <= 99; i++) {
+                const digit = String(i).padStart(2, '0'); // Format as 00, 01, ..., 99
+                const box = document.createElement('div');
+                box.classList.add('digit-box');
+                box.textContent = digit;
+                box.dataset.value = digit; // Store the value
+                box.dataset.group = groupName; // Assign to a group
+
+                box.addEventListener('click', function() {
+                    // Deselect all other boxes in the same group
+                    const currentGroup = this.dataset.group;
+                    const allBoxesInGroup = document.querySelectorAll(`.digit-box[data-group="${currentGroup}"]`);
+                    allBoxesInGroup.forEach(b => {
+                        if (b !== this) {
+                            b.classList.remove('selected');
+                        }
+                    });
+                    // Toggle selection for the clicked box
+                    this.classList.toggle('selected');
+                    saveState(); // Save state after selection change
+                });
+                container.appendChild(box);
+            }
+        }
+
+        /**
+         * Generates digit boxes for skill levels (0-4).
+         * Allows only one selection per skill.
+         * @param {string} containerId The ID of the container element.
+         * @param {string} groupName The name of the group for selection logic (unique per skill).
+         * @param {number} startDigit The starting digit for the boxes (e.g., 0).
+         * @param {number} endDigit The ending digit for the boxes (e.g., 4).
+         */
+        function generateSkillLevelBoxes(containerId, groupName, startDigit, endDigit) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            for (let i = startDigit; i <= endDigit; i++) {
+                const digit = String(i); // No padding for single digits
+                const box = document.createElement('div');
+                box.classList.add('digit-box'); // Reusing digit-box style
+                box.textContent = digit;
+                box.dataset.value = digit;
+                box.dataset.group = groupName; // Unique group for each skill
+
+                // Default select '0' for skill levels
+                if (i === 0) {
+                    box.classList.add('selected');
+                }
+
+                box.addEventListener('click', function() {
+                    const currentGroup = this.dataset.group;
+                    const allBoxesInGroup = document.querySelectorAll(`.digit-box[data-group="${currentGroup}"]`);
+                    allBoxesInGroup.forEach(b => {
+                        if (b !== this) {
+                            b.classList.remove('selected');
+                        }
+                    });
+                    this.classList.toggle('selected');
+                    saveState(); // Save state after selection change
+                });
+                container.appendChild(box);
+            }
+        }
+
+        /**
+         * Saves the current state of the character sheet to localStorage.
+         */
+        function saveState() {
+            const state = {};
+
+            // Save text/number inputs by ID
+            const inputIds = [
+                'name', 'race', 'gender', 'age',
+                'sila', 'zrecznosc', 'inteligencja', 'kondycja', 'bystrosc',
+                'physical-armor', 'magical-armor', 'headwear', 'necklace', 'ring',
+                'chest', 'pants', 'boots', 'weapon1', 'weapon2',
+                'celnosc', 'unik-obrona', 'skradanie', 'perswazja', 'gadanina',
+                'czytanie-bibliotek', 'psychoanaliza', 'tropienie', 'ukrywanie',
+                'zastraszanie', 'oszustwo', 'rozumienie-zwierzat', 'rzemioslo',
+                'zlodziejstwo', 'handel', 'historia', 'nawigacja', 'spostrzegawczosc',
+                'urok-osobisty', 'alchemia', 'nasluchiwanie', 'wyczuwanie-magii', 'zaklinanie'
+            ];
+            inputIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    state[id] = element.value;
+                }
+            });
+
+            // Save selected digit boxes for main stats (health, luck, sanity)
+            const mainDigitGroups = ['health', 'luck', 'sanity'];
+            mainDigitGroups.forEach(group => {
+                const selectedBox = document.querySelector(`.digit-box.selected[data-group="${group}"]`);
+                if (selectedBox) {
+                    state[`${group}-selected`] = selectedBox.dataset.value;
+                } else {
+                    state[`${group}-selected`] = null; // No selection
+                }
+            });
+
+            // Save selected digit boxes for skill levels
+            const skillLevelGroups = [
+                'sztuka-walki', 'lucznictwo', 'pirokineza', 'hydrozofia',
+                'aeroturgia', 'geomancja', 'nekromancja', 'polimorfia'
+            ];
+            skillLevelGroups.forEach(group => {
+                const selectedBox = document.querySelector(`.digit-box.selected[data-group="${group}"]`);
+                if (selectedBox) {
+                    state[`${group}-selected`] = selectedBox.dataset.value;
+                } else {
+                    state[`${group}-selected`] = null; // No selection
+                }
+            });
+
+            // Save Ekwipunek table inputs
+            const ekwipunekInputs = document.querySelectorAll('#ekwipunek table input[type="text"]');
+            const ekwipunekItems = [];
+            ekwipunekInputs.forEach(input => {
+                ekwipunekItems.push(input.value);
+            });
+            state['ekwipunek-items'] = ekwipunekItems;
+
+            // Save Skille table inputs
+            const skilleInputs = document.querySelectorAll('#skille table input[type="text"]');
+            const skilleData = {};
+            skilleInputs.forEach(input => {
+                const row = input.dataset.row;
+                const col = input.dataset.col;
+                if (!skilleData[row]) {
+                    skilleData[row] = {};
+                }
+                skilleData[row][col] = input.value;
+            });
+            state['skille-data'] = skilleData;
+
+            localStorage.setItem('dndCharacterSheetState', JSON.stringify(state));
+            console.log('State saved:', state);
+        }
+
+        /**
+         * Loads the saved state from localStorage and applies it to the character sheet.
+         */
+        function loadState() {
+            const savedState = localStorage.getItem('dndCharacterSheetState');
+            if (!savedState) {
+                console.log('No saved state found.');
+                return;
+            }
+
+            const state = JSON.parse(savedState);
+            console.log('State loaded:', state);
+
+            // Load text/number inputs by ID
+            const inputIds = [
+                'name', 'race', 'gender', 'age',
+                'sila', 'zrecznosc', 'inteligencja', 'kondycja', 'bystrosc',
+                'physical-armor', 'magical-armor', 'headwear', 'necklace', 'ring',
+                'chest', 'pants', 'boots', 'weapon1', 'weapon2',
+                'celnosc', 'unik-obrona', 'skradanie', 'perswazja', 'gadanina',
+                'czytanie-bibliotek', 'psychoanaliza', 'tropienie', 'ukrywanie',
+                'zastraszanie', 'oszustwo', 'rozumienie-zwierzat', 'rzemioslo',
+                'zlodziejstwo', 'handel', 'historia', 'nawigacja', 'spostrzegawczosc',
+                'urok-osobisty', 'alchemia', 'nasluchiwanie', 'wyczuwanie-magii', 'zaklinanie'
+            ];
+            inputIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element && state[id] !== undefined) {
+                    element.value = state[id];
+                }
+            });
+
+            // Load selected digit boxes for main stats (health, luck, sanity)
+            const mainDigitGroups = ['health', 'luck', 'sanity'];
+            mainDigitGroups.forEach(group => {
+                const savedValue = state[`${group}-selected`];
+                if (savedValue !== null) {
+                    const selectedBox = document.querySelector(`.digit-box[data-group="${group}"][data-value="${savedValue}"]`);
+                    if (selectedBox) {
+                        selectedBox.classList.add('selected');
+                    }
+                }
+            });
+
+            // Load selected digit boxes for skill levels
+            const skillLevelGroups = [
+                'sztuka-walki', 'lucznictwo', 'pirokineza', 'hydrozofia',
+                'aeroturgia', 'geomancja', 'nekromancja', 'polimorfia'
+            ];
+            skillLevelGroups.forEach(group => {
+                const savedValue = state[`${group}-selected`];
+                if (savedValue !== null) {
+                    const selectedBox = document.querySelector(`.digit-box[data-group="${group}"][data-value="${savedValue}"]`);
+                    if (selectedBox) {
+                        selectedBox.classList.add('selected');
+                    }
+                } else {
+                    // If no value saved, ensure '0' is selected by default
+                    const defaultZeroBox = document.querySelector(`.digit-box[data-group="${group}"][data-value="0"]`);
+                    if (defaultZeroBox) {
+                        defaultZeroBox.classList.add('selected');
+                    }
+                }
+            });
+
+            // Load Ekwipunek table inputs
+            if (state['ekwipunek-items']) {
+                const ekwipunekInputs = document.querySelectorAll('#ekwipunek table input[type="text"]');
+                state['ekwipunek-items'].forEach((value, index) => {
+                    if (ekwipunekInputs[index]) {
+                        ekwipunekInputs[index].value = value;
+                    }
+                });
+            }
+
+            // Load Skille table inputs
+            if (state['skille-data']) {
+                const skilleData = state['skille-data'];
+                for (const row in skilleData) {
+                    for (const col in skilleData[row]) {
+                        const input = document.querySelector(`#skille table input[data-row="${row}"][data-col="${col}"]`);
+                        if (input) {
+                            input.value = skilleData[row][col];
+                        }
+                    }
+                }
+            }
+        }
+
+        // Generate digit boxes on page load and then load saved state
+        window.onload = function() {
+            generateMainDigitBoxes('health-points', 'health');
+            generateMainDigitBoxes('luck', 'luck');
+            generateMainDigitBoxes('sanity', 'sanity');
+
+            // Generate skill level boxes (0-4)
+            generateSkillLevelBoxes('sztuka-walki-level', 'sztuka-walki', 0, 4);
+            generateSkillLevelBoxes('lucznictwo-level', 'lucznictwo', 0, 4);
+            generateSkillLevelBoxes('pirokineza-level', 'pirokineza', 0, 4);
+            generateSkillLevelBoxes('hydrozofia-level', 'hydrozofia', 0, 4);
+            generateSkillLevelBoxes('aeroturgia-level', 'aeroturgia', 0, 4);
+            generateSkillLevelBoxes('geomancja-level', 'geomancja', 0, 4);
+            generateSkillLevelBoxes('nekromancja-level', 'nekromancja', 0, 4);
+            generateSkillLevelBoxes('polimorfia-level', 'polimorfia', 0, 4);
+
+            loadState(); // Load state after all elements are generated and default selections are made
+        };
+    </script>
+</body>
+</html>
