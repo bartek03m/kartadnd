@@ -142,6 +142,16 @@
             background-color: #eff6ff; /* Light blue on focus */
         }
 
+        /* Specific width adjustments for Ekwipunek table */
+        #ekwipunek .data-table th:nth-child(1),
+        #ekwipunek .data-table td:nth-child(1) {
+            width: 70%; /* More space for Nazwa */
+        }
+        #ekwipunek .data-table th:nth-child(2),
+        #ekwipunek .data-table td:nth-child(2) {
+            width: 30%; /* Less space for Ilość */
+        }
+
         @media (max-width: 768px) {
             .tab-buttons {
                 flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
