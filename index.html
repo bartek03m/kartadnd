@@ -256,8 +256,8 @@
                 </div>
             </div>
 
-            <!-- Health, Luck, Sanity section remains below this main grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Health, Luck, Sanity, and now Punkty Źródła -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6"> <!-- Adjusted to 4 columns for the new field -->
                 <div>
                     <h3 class="text-lg font-semibold mb-3 text-gray-800">Punkty Zdrowia:</h3>
                     <div id="health-points" class="digits-group" data-group="health">
@@ -274,6 +274,12 @@
                     <h3 class="text-lg font-semibold mb-3 text-gray-800">Poczytalność:</h3>
                     <div id="sanity" class="digits-group" data-group="sanity">
                         <!-- Digits 00-99 will be generated here by JS -->
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Punkty Źródła:</h3>
+                    <div id="source-points" class="digits-group" data-group="source-points">
+                        <!-- Digits 00-20 will be generated here by JS -->
                     </div>
                 </div>
             </div>
@@ -636,12 +642,17 @@
          * Allows only one selection per group.
          * @param {string} containerId The ID of the container element.
          * @param {string} groupName The name of the group for selection logic.
+         * @param {number} startDigit The starting digit for the boxes.
+         * @param {number} endDigit The ending digit for the boxes.
          */
-        function generateMainDigitBoxes(containerId, groupName) {
+        function generateMainDigitBoxes(containerId, groupName, startDigit, endDigit) {
             const container = document.getElementById(containerId);
             if (!container) return; // Exit if container not found
 
-            for (let i = 0; i <= 99; i++) {
+            // Clear existing boxes to prevent duplicates on re-render if any
+            container.innerHTML = '';
+
+            for (let i = startDigit; i <= endDigit; i++) {
                 const digit = String(i).padStart(2, '0'); // Format as 00, 01, ..., 99
                 const box = document.createElement('div');
                 box.classList.add('digit-box');
@@ -677,6 +688,9 @@
         function generateSkillLevelBoxes(containerId, groupName, startDigit, endDigit) {
             const container = document.getElementById(containerId);
             if (!container) return;
+
+            // Clear existing boxes to prevent duplicates on re-render if any
+            container.innerHTML = '';
 
             for (let i = startDigit; i <= endDigit; i++) {
                 const digit = String(i); // No padding for single digits
@@ -731,8 +745,8 @@
                 }
             });
 
-            // Save selected digit boxes for main stats (health, luck, sanity)
-            const mainDigitGroups = ['health', 'luck', 'sanity'];
+            // Save selected digit boxes for main stats (health, luck, sanity, source-points)
+            const mainDigitGroups = ['health', 'luck', 'sanity', 'source-points'];
             mainDigitGroups.forEach(group => {
                 const selectedBox = document.querySelector(`.digit-box.selected[data-group="${group}"]`);
                 if (selectedBox) {
@@ -820,8 +834,8 @@
                 }
             });
 
-            // Load selected digit boxes for main stats (health, luck, sanity)
-            const mainDigitGroups = ['health', 'luck', 'sanity'];
+            // Load selected digit boxes for main stats (health, luck, sanity, source-points)
+            const mainDigitGroups = ['health', 'luck', 'sanity', 'source-points'];
             mainDigitGroups.forEach(group => {
                 const savedValue = state[`${group}-selected`];
                 if (savedValue !== null) {
@@ -883,9 +897,10 @@
 
         // Generate digit boxes on page load and then load saved state
         window.onload = function() {
-            generateMainDigitBoxes('health-points', 'health');
-            generateMainDigitBoxes('luck', 'luck');
-            generateMainDigitBoxes('sanity', 'sanity');
+            generateMainDigitBoxes('health-points', 'health', 0, 99);
+            generateMainDigitBoxes('luck', 'luck', 0, 99);
+            generateMainDigitBoxes('sanity', 'sanity', 0, 99);
+            generateMainDigitBoxes('source-points', 'source-points', 0, 20); // New: Punkty Źródła (0-20)
 
             // Generate skill level boxes (0-4)
             generateSkillLevelBoxes('sztuka-walki-level', 'sztuka-walki', 0, 4);
