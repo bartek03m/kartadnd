@@ -7,27 +7,37 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for better aesthetics and specific layout needs */
+        /* Styles for the entire viewport background */
+        html {
+            background-color: #f0f2f5; /* Light gray background for the entire page */
+        }
+
+        /* Custom styles for the body, which now acts as the wrapper for the main container */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5; /* Light gray background */
+            background-color: transparent; /* Transparent background for body */
             display: flex;
             justify-content: center;
             align-items: flex-start; /* Align to top for better content flow */
             min-height: 100vh;
-            padding: 20px;
+            padding: 0; /* Removed padding from body to allow container to stretch */
             box-sizing: border-box;
+            margin: 0 auto; /* Center the body content horizontally */
         }
+
+        /* Main character sheet container */
         .character-sheet-container {
-            background-color: #ffffff;
+            background-color: #ffffff; /* White background for the sheet itself */
             border-radius: 1rem; /* Rounded corners */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-            width: 100%;
-            max-width: 900px; /* Max width for desktop */
+            width: 100%; /* Make it 100% width */
+            max-width: 100%; /* Ensure it takes full width */
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            margin: 20px; /* Add margin around the container instead of body padding */
         }
+
         .tab-button {
             padding: 1rem 1.5rem;
             font-weight: 600;
@@ -43,7 +53,7 @@
         }
         .tab-content {
             display: none;
-            padding: 1.5rem;
+            padding: 1.5rem; /* Padding for the content inside each tab */
         }
         .tab-content.active {
             display: block;
@@ -153,15 +163,15 @@
         }
 
         @media (max-width: 768px) {
+            .character-sheet-container {
+                margin: 10px; /* Smaller margin on mobile */
+            }
             .tab-buttons {
                 flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
             }
             .tab-button {
                 flex-grow: 1; /* Make buttons take equal width */
                 text-align: center;
-            }
-            .character-sheet-container {
-                padding: 10px;
             }
             /* Adjust font sizes for better readability on small screens */
             body { font-size: 0.9rem; }
@@ -658,7 +668,7 @@
          * Generates digit boxes for skill levels (0-4).
          * Allows only one selection per skill.
          * @param {string} containerId The ID of the container element.
-         * @param {string} groupName The name of the group for selection logic (unique per skill).
+         * @param {string} groupName
          * @param {number} startDigit The starting digit for the boxes (e.g., 0).
          * @param {number} endDigit The ending digit for the boxes (e.g., 4).
          */
@@ -888,5 +898,4 @@
             loadState(); // Load state after all elements are generated and default selections are made
         };
     </script>
-</body>
 </html>
