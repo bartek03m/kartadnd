@@ -165,6 +165,16 @@
             width: 4rem; /* Fixed width for attribute inputs */
             text-align: center;
         }
+        
+        .armor-value-group {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .armor-value-group input {
+            width: 4rem;
+            text-align: center;
+        }
 
         @media (max-width: 768px) {
             .character-sheet-container {
@@ -265,7 +275,7 @@
                     </div>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Fart:</h3>
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Punkty Szczęścia:</h3>
                     <div id="luck" class="digits-group" data-group="luck">
                         <!-- Digits 00-99 will be generated here by JS -->
                     </div>
@@ -289,50 +299,186 @@
         <div id="uzbrojenie" class="tab-content">
             <h2 class="text-2xl font-bold mb-6 text-gray-800">Uzbrojenie</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Total Armor -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 p-4 bg-gray-100 rounded-lg">
                 <div>
-                    <label for="physical-armor" class="block text-sm font-medium text-gray-700 mb-1">Pancerz Fizyczny:</label>
-                    <input type="text" id="physical-armor" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                    <label for="physical-armor-total-current" class="block text-sm font-medium text-gray-700 mb-1">Całkowity Pancerz Fizyczny (Aktualny / Max):</label>
+                    <div class="flex items-center">
+                        <input type="text" id="physical-armor-total-current" class="w-full p-2 border border-gray-300 rounded-l-md bg-gray-200 shadow-sm" readonly>
+                        <span class="px-3 py-2 bg-gray-300 border-t border-b border-gray-300 text-gray-600">/</span>
+                        <input type="text" id="physical-armor-total-max" class="w-full p-2 border border-gray-300 rounded-r-md bg-gray-200 shadow-sm" readonly>
+                    </div>
                 </div>
                 <div>
-                    <label for="magical-armor" class="block text-sm font-medium text-gray-700 mb-1">Pancerz Magiczny:</label>
-                    <input type="text" id="magical-armor" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                    <label for="magical-armor-total-current" class="block text-sm font-medium text-gray-700 mb-1">Całkowity Pancerz Magiczny (Aktualny / Max):</label>
+                    <div class="flex items-center">
+                        <input type="text" id="magical-armor-total-current" class="w-full p-2 border border-gray-300 rounded-l-md bg-gray-200 shadow-sm" readonly>
+                        <span class="px-3 py-2 bg-gray-300 border-t border-b border-gray-300 text-gray-600">/</span>
+                        <input type="text" id="magical-armor-total-max" class="w-full p-2 border border-gray-300 rounded-r-md bg-gray-200 shadow-sm" readonly>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="headwear" class="block text-sm font-medium text-gray-700 mb-1">Nakrycie Głowy:</label>
-                    <input type="text" id="headwear" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+            <!-- Armor Pieces -->
+            <div class="space-y-4 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center font-medium text-gray-500 text-sm">
+                    <div class="sm:col-span-2">Element</div>
+                    <div>Pancerz Fizyczny</div>
+                    <div>Pancerz Magiczny</div>
+                    <div>Regeneracja</div>
                 </div>
-                <div>
-                    <label for="necklace" class="block text-sm font-medium text-gray-700 mb-1">Naszyjnik:</label>
-                    <input type="text" id="necklace" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                <!-- Headwear -->
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
+                    <div class="sm:col-span-2">
+                        <input type="text" id="headwear-name" placeholder="Nakrycie Głowy" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="headwear" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="headwear" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="headwear" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="headwear" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="repairArmorType('headwear', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
+                        <button onclick="repairArmorType('headwear', 'mag')" class="px-2 py-1 text-xs bg-purple-500 text-white font-semibold rounded-md shadow-sm hover:bg-purple-600" title="Napraw pancerz magiczny">Mag.</button>
+                    </div>
                 </div>
-                <div>
-                    <label for="ring" class="block text-sm font-medium text-gray-700 mb-1">Pierscień:</label>
-                    <input type="text" id="ring" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                <!-- Chest -->
+                 <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
+                    <div class="sm:col-span-2">
+                        <input type="text" id="chest-name" placeholder="Klatka Piersiowa" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="chest" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="chest" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="chest" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="chest" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="repairArmorType('chest', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
+                        <button onclick="repairArmorType('chest', 'mag')" class="px-2 py-1 text-xs bg-purple-500 text-white font-semibold rounded-md shadow-sm hover:bg-purple-600" title="Napraw pancerz magiczny">Mag.</button>
+                    </div>
                 </div>
-                <div>
-                    <label for="chest" class="block text-sm font-medium text-gray-700 mb-1">Klatka Piersiowa:</label>
-                    <input type="text" id="chest" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                <!-- Pants -->
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
+                    <div class="sm:col-span-2">
+                        <input type="text" id="pants-name" placeholder="Spodnie" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="pants" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="pants" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="pants" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="pants" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="repairArmorType('pants', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
+                        <button onclick="repairArmorType('pants', 'mag')" class="px-2 py-1 text-xs bg-purple-500 text-white font-semibold rounded-md shadow-sm hover:bg-purple-600" title="Napraw pancerz magiczny">Mag.</button>
+                    </div>
                 </div>
-                <div>
-                    <label for="pants" class="block text-sm font-medium text-gray-700 mb-1">Spodnie:</label>
-                    <input type="text" id="pants" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                <!-- Boots -->
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
+                    <div class="sm:col-span-2">
+                        <input type="text" id="boots-name" placeholder="Buty" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="boots" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="boots" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="boots" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="boots" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="repairArmorType('boots', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
+                        <button onclick="repairArmorType('boots', 'mag')" class="px-2 py-1 text-xs bg-purple-500 text-white font-semibold rounded-md shadow-sm hover:bg-purple-600" title="Napraw pancerz magiczny">Mag.</button>
+                    </div>
                 </div>
-                <div>
-                    <label for="boots" class="block text-sm font-medium text-gray-700 mb-1">Buty:</label>
-                    <input type="text" id="boots" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                <!-- Necklace -->
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
+                    <div class="sm:col-span-2">
+                        <input type="text" id="necklace-name" placeholder="Naszyjnik" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="necklace" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="necklace" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="necklace" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="necklace" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="repairArmorType('necklace', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
+                        <button onclick="repairArmorType('necklace', 'mag')" class="px-2 py-1 text-xs bg-purple-500 text-white font-semibold rounded-md shadow-sm hover:bg-purple-600" title="Napraw pancerz magiczny">Mag.</button>
+                    </div>
                 </div>
-                <div class="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Ring -->
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
+                    <div class="sm:col-span-2">
+                        <input type="text" id="ring-name" placeholder="Pierścień" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="ring" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="ring" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="armor-value-group">
+                        <input type="number" data-item="ring" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
+                        <input type="number" data-item="ring" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="repairArmorType('ring', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
+                        <button onclick="repairArmorType('ring', 'mag')" class="px-2 py-1 text-xs bg-purple-500 text-white font-semibold rounded-md shadow-sm hover:bg-purple-600" title="Napraw pancerz magiczny">Mag.</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Armor Reduction System -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">Redukcja Pancerza</h3>
+                <div class="flex flex-wrap items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                    <input type="number" id="reduce-armor-amount" placeholder="Ilość do odjęcia" min="1" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                    <select id="reduce-armor-type" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                        <option value="physical">Pancerz Fizyczny</option>
+                        <option value="magical">Pancerz Magiczny</option>
+                    </select>
+                    <button id="reduce-armor-btn" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Odejmij Pancerz</button>
+                </div>
+            </div>
+
+            <!-- Weapons -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                 <h3 class="text-lg font-semibold mb-4 text-gray-800">Broń</h3>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="weapon1" class="block text-sm font-medium text-gray-700 mb-1">Broń 1:</label>
-                        <input type="text" id="weapon1" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Broń 1:</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="weapon1-name" placeholder="Nazwa" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                            <input type="text" id="weapon1-damage" placeholder="Obrażenia" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                        </div>
                     </div>
                     <div>
-                        <label for="weapon2" class="block text-sm font-medium text-gray-700 mb-1">Broń 2:</label>
-                        <input type="text" id="weapon2" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Broń 2:</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="weapon2-name" placeholder="Nazwa" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                            <input type="text" id="weapon2-damage" placeholder="Obrażenia" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -571,13 +717,13 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Nazwa</th>
-                            <th>Działanie</th>
-                            <th>Koszt</th>
+                            <th style="width: 40%;">Nazwa</th>
+                            <th style="width: 45%;">Działanie</th>
+                            <th style="width: 15%;">Koszt</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- 6 rows for skills/abilities -->
+                        <!-- 8 rows for skills/abilities -->
                         <tr>
                             <td><input type="text" placeholder="" data-row="0" data-col="0" oninput="saveState()"></td>
                             <td><input type="text" placeholder="" data-row="0" data-col="1" oninput="saveState()"></td>
@@ -608,6 +754,16 @@
                             <td><input type="text" placeholder="" data-row="5" data-col="1" oninput="saveState()"></td>
                             <td><input type="text" placeholder="" data-row="5" data-col="2" oninput="saveState()"></td>
                         </tr>
+                        <tr>
+                            <td><input type="text" placeholder="" data-row="6" data-col="0" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="6" data-col="1" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="6" data-col="2" oninput="saveState()"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" placeholder="" data-row="7" data-col="0" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="7" data-col="1" oninput="saveState()"></td>
+                            <td><input type="text" placeholder="" data-row="7" data-col="2" oninput="saveState()"></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -617,121 +773,151 @@
     <script>
         // Function to handle tab switching
         function openTab(evt, tabName) {
-            // Declare all variables
             var i, tabcontent, tablinks;
-
-            // Get all elements with class="tab-content" and hide them
             tabcontent = document.getElementsByClassName("tab-content");
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].classList.remove("active");
             }
-
-            // Get all elements with class="tab-button" and remove the "active" class
             tablinks = document.getElementsByClassName("tab-button");
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].classList.remove("active");
             }
-
-            // Show the current tab, and add an "active" class to the button that opened the tab
             document.getElementById(tabName).classList.add("active");
             evt.currentTarget.classList.add("active");
+            saveState();
         }
 
-        /**
-         * Generates digit boxes for Health, Luck, and Sanity (00-99).
-         * Allows only one selection per group.
-         * @param {string} containerId The ID of the container element.
-         * @param {string} groupName The name of the group for selection logic.
-         * @param {number} startDigit The starting digit for the boxes.
-         * @param {number} endDigit The ending digit for the boxes.
-         */
         function generateMainDigitBoxes(containerId, groupName, startDigit, endDigit) {
             const container = document.getElementById(containerId);
-            if (!container) return; // Exit if container not found
-
-            // Clear existing boxes to prevent duplicates on re-render if any
+            if (!container) return;
             container.innerHTML = '';
-
             for (let i = startDigit; i <= endDigit; i++) {
-                const digit = String(i).padStart(2, '0'); // Format as 00, 01, ..., 99
+                const digit = String(i).padStart(2, '0');
                 const box = document.createElement('div');
                 box.classList.add('digit-box');
                 box.textContent = digit;
-                box.dataset.value = digit; // Store the value
-                box.dataset.group = groupName; // Assign to a group
-
+                box.dataset.value = digit;
+                box.dataset.group = groupName;
                 box.addEventListener('click', function() {
-                    // Deselect all other boxes in the same group
                     const currentGroup = this.dataset.group;
                     const allBoxesInGroup = document.querySelectorAll(`.digit-box[data-group="${currentGroup}"]`);
                     allBoxesInGroup.forEach(b => {
-                        if (b !== this) {
-                            b.classList.remove('selected');
-                        }
+                        if (b !== this) b.classList.remove('selected');
                     });
-                    // Toggle selection for the clicked box
                     this.classList.toggle('selected');
-                    saveState(); // Save state after selection change
+                    saveState();
                 });
                 container.appendChild(box);
             }
         }
 
-        /**
-         * Generates digit boxes for skill levels (0-4).
-         * Allows only one selection per skill.
-         * @param {string} containerId The ID of the container element.
-         * @param {string} groupName
-         * @param {number} startDigit The starting digit for the boxes (e.g., 0).
-         * @param {number} endDigit The ending digit for the boxes (e.g., 4).
-         */
         function generateSkillLevelBoxes(containerId, groupName, startDigit, endDigit) {
             const container = document.getElementById(containerId);
             if (!container) return;
-
-            // Clear existing boxes to prevent duplicates on re-render if any
             container.innerHTML = '';
-
             for (let i = startDigit; i <= endDigit; i++) {
-                const digit = String(i); // No padding for single digits
+                const digit = String(i);
                 const box = document.createElement('div');
-                box.classList.add('digit-box'); // Reusing digit-box style
+                box.classList.add('digit-box');
                 box.textContent = digit;
                 box.dataset.value = digit;
-                box.dataset.group = groupName; // Unique group for each skill
-
-                // Default select '0' for skill levels
-                if (i === 0) {
-                    box.classList.add('selected');
-                }
-
+                box.dataset.group = groupName;
+                if (i === 0) box.classList.add('selected');
                 box.addEventListener('click', function() {
                     const currentGroup = this.dataset.group;
                     const allBoxesInGroup = document.querySelectorAll(`.digit-box[data-group="${currentGroup}"]`);
                     allBoxesInGroup.forEach(b => {
-                        if (b !== this) {
-                            b.classList.remove('selected');
-                        }
+                        if (b !== this) b.classList.remove('selected');
                     });
                     this.classList.toggle('selected');
-                    saveState(); // Save state after selection change
+                    saveState();
                 });
                 container.appendChild(box);
             }
         }
+        
+        function calculateTotalArmor() {
+            let totalPhysCurrent = 0, totalPhysMax = 0, totalMagCurrent = 0, totalMagMax = 0;
+            const items = ['headwear', 'chest', 'pants', 'boots', 'necklace', 'ring'];
+            items.forEach(item => {
+                totalPhysCurrent += parseInt(document.querySelector(`[data-item='${item}'][data-type='phys'][data-role='current']`).value, 10) || 0;
+                totalPhysMax += parseInt(document.querySelector(`[data-item='${item}'][data-type='phys'][data-role='max']`).value, 10) || 0;
+                totalMagCurrent += parseInt(document.querySelector(`[data-item='${item}'][data-type='mag'][data-role='current']`).value, 10) || 0;
+                totalMagMax += parseInt(document.querySelector(`[data-item='${item}'][data-type='mag'][data-role='max']`).value, 10) || 0;
+            });
+            document.getElementById('physical-armor-total-current').value = totalPhysCurrent;
+            document.getElementById('physical-armor-total-max').value = totalPhysMax;
+            document.getElementById('magical-armor-total-current').value = totalMagCurrent;
+            document.getElementById('magical-armor-total-max').value = totalMagMax;
+        }
 
-        /**
-         * Saves the current state of the character sheet to localStorage.
-         */
+        function reduceArmor() {
+            const amountInput = document.getElementById('reduce-armor-amount');
+            let amount = parseInt(amountInput.value, 10) || 0;
+            const type = document.getElementById('reduce-armor-type').value;
+            if (amount <= 0) return;
+
+            const role = type === 'physical' ? 'phys' : 'mag';
+            const items = ['headwear', 'chest', 'pants', 'boots', 'necklace', 'ring'];
+
+            items.forEach(item => {
+                if (amount <= 0) return;
+                const currentInput = document.querySelector(`[data-item='${item}'][data-type='${role}'][data-role='current']`);
+                let currentValue = parseInt(currentInput.value, 10) || 0;
+                if (currentValue > 0) {
+                    const reduction = Math.min(currentValue, amount);
+                    currentInput.value = currentValue - reduction;
+                    amount -= reduction;
+                }
+            });
+            
+            amountInput.value = '';
+            calculateTotalArmor();
+            saveState();
+        }
+
+        function repairArmorType(itemName, armorType) {
+            const currentInput = document.querySelector(`[data-item='${itemName}'][data-type='${armorType}'][data-role='current']`);
+            const maxInput = document.querySelector(`[data-item='${itemName}'][data-type='${armorType}'][data-role='max']`);
+
+            if (currentInput && maxInput) {
+                currentInput.value = maxInput.value;
+            }
+
+            calculateTotalArmor();
+            saveState();
+        }
+
+        function validateArmorInput(input) {
+            const { item, type, role } = input.dataset;
+            const currentInput = document.querySelector(`[data-item='${item}'][data-type='${type}'][data-role='current']`);
+            const maxInput = document.querySelector(`[data-item='${item}'][data-type='${type}'][data-role='max']`);
+            let currentValue = parseInt(currentInput.value, 10) || 0;
+            let maxValue = parseInt(maxInput.value, 10) || 0;
+
+            if (role === 'max') {
+                if (currentValue > maxValue) {
+                    currentInput.value = maxValue;
+                }
+            } else { // role === 'current'
+                if (currentValue > maxValue) {
+                    input.value = maxValue;
+                }
+            }
+            calculateTotalArmor();
+            saveState();
+        }
+
         function saveState() {
             const state = {};
+            const activeTab = document.querySelector('.tab-button.active');
+            if (activeTab) state.activeTab = activeTab.getAttribute('onclick').split("'")[1];
 
-            // Save text/number inputs by ID
             const inputIds = [
                 'name', 'race', 'gender', 'age',
                 'sila', 'zrecznosc', 'inteligencja', 'kondycja', 'bystrosc',
-                'physical-armor', 'magical-armor', 'headwear', 'necklace', 'ring',
-                'chest', 'pants', 'boots', 'weapon1', 'weapon2',
+                'headwear-name', 'chest-name', 'pants-name', 'boots-name', 'necklace-name', 'ring-name',
+                'weapon1-name', 'weapon1-damage', 'weapon2-name', 'weapon2-damage',
                 'celnosc', 'unik-obrona', 'skradanie', 'perswazja', 'gadanina',
                 'czytanie-bibliotek', 'psychoanaliza', 'tropienie', 'ukrywanie',
                 'zastraszanie', 'oszustwo', 'rozumienie-zwierzat', 'rzemioslo',
@@ -740,87 +926,55 @@
             ];
             inputIds.forEach(id => {
                 const element = document.getElementById(id);
-                if (element) {
-                    state[id] = element.value;
-                }
+                if (element) state[id] = element.value;
+            });
+            
+            document.querySelectorAll('.armor-input').forEach(input => {
+                const { item, type, role } = input.dataset;
+                state[`${item}-${type}-${role}`] = input.value;
             });
 
-            // Save selected digit boxes for main stats (health, luck, sanity, source-points)
             const mainDigitGroups = ['health', 'luck', 'sanity', 'source-points'];
             mainDigitGroups.forEach(group => {
                 const selectedBox = document.querySelector(`.digit-box.selected[data-group="${group}"]`);
-                if (selectedBox) {
-                    state[`${group}-selected`] = selectedBox.dataset.value;
-                } else {
-                    state[`${group}-selected`] = null; // No selection
-                }
+                state[`${group}-selected`] = selectedBox ? selectedBox.dataset.value : null;
             });
 
-            // Save selected digit boxes for skill levels
-            const skillLevelGroups = [
-                'sztuka-walki', 'lucznictwo', 'pirokineza', 'hydrozofia',
-                'aeroturgia', 'geomancja', 'nekromancja', 'polimorfia'
-            ];
+            const skillLevelGroups = ['sztuka-walki', 'lucznictwo', 'pirokineza', 'hydrozofia', 'aeroturgia', 'geomancja', 'nekromancja', 'polimorfia'];
             skillLevelGroups.forEach(group => {
                 const selectedBox = document.querySelector(`.digit-box.selected[data-group="${group}"]`);
-                if (selectedBox) {
-                    state[`${group}-selected`] = selectedBox.dataset.value;
-                } else {
-                    state[`${group}-selected`] = null; // No selection
-                }
+                state[`${group}-selected`] = selectedBox ? selectedBox.dataset.value : null;
             });
 
-            // Save Ekwipunek table inputs (now two columns: name and quantity)
             const ekwipunekItems = [];
-            for (let i = 0; i < 15; i++) { // Assuming 15 rows for inventory
+            for (let i = 0; i < 15; i++) {
                 const nameInput = document.querySelector(`input[data-item-type="name"][data-item-index="${i}"]`);
                 const quantityInput = document.querySelector(`input[data-item-type="quantity"][data-item-index="${i}"]`);
-                if (nameInput && quantityInput) {
-                    ekwipunekItems.push({
-                        name: nameInput.value,
-                        quantity: quantityInput.value
-                    });
-                }
+                if (nameInput && quantityInput) ekwipunekItems.push({ name: nameInput.value, quantity: quantityInput.value });
             }
             state['ekwipunek-items'] = ekwipunekItems;
 
-
-            // Save Skille table inputs
-            const skilleInputs = document.querySelectorAll('#zdolnosci table input[type="text"]'); // Changed ID to #zdolnosci
             const skilleData = {};
-            skilleInputs.forEach(input => {
-                const row = input.dataset.row;
-                const col = input.dataset.col;
-                if (!skilleData[row]) {
-                    skilleData[row] = {};
-                }
+            document.querySelectorAll('#zdolnosci table input[type="text"]').forEach(input => {
+                const { row, col } = input.dataset;
+                if (!skilleData[row]) skilleData[row] = {};
                 skilleData[row][col] = input.value;
             });
             state['skille-data'] = skilleData;
 
             localStorage.setItem('dndCharacterSheetState', JSON.stringify(state));
-            console.log('State saved:', state);
         }
 
-        /**
-         * Loads the saved state from localStorage and applies it to the character sheet.
-         */
         function loadState() {
             const savedState = localStorage.getItem('dndCharacterSheetState');
-            if (!savedState) {
-                console.log('No saved state found.');
-                return;
-            }
-
+            if (!savedState) return;
             const state = JSON.parse(savedState);
-            console.log('State loaded:', state);
 
-            // Load text/number inputs by ID
             const inputIds = [
                 'name', 'race', 'gender', 'age',
                 'sila', 'zrecznosc', 'inteligencja', 'kondycja', 'bystrosc',
-                'physical-armor', 'magical-armor', 'headwear', 'necklace', 'ring',
-                'chest', 'pants', 'boots', 'weapon1', 'weapon2',
+                'headwear-name', 'chest-name', 'pants-name', 'boots-name', 'necklace-name', 'ring-name',
+                'weapon1-name', 'weapon1-damage', 'weapon2-name', 'weapon2-damage',
                 'celnosc', 'unik-obrona', 'skradanie', 'perswazja', 'gadanina',
                 'czytanie-bibliotek', 'psychoanaliza', 'tropienie', 'ukrywanie',
                 'zastraszanie', 'oszustwo', 'rozumienie-zwierzat', 'rzemioslo',
@@ -829,80 +983,66 @@
             ];
             inputIds.forEach(id => {
                 const element = document.getElementById(id);
-                if (element && state[id] !== undefined) {
-                    element.value = state[id];
-                }
+                if (element && state[id] !== undefined) element.value = state[id];
             });
 
-            // Load selected digit boxes for main stats (health, luck, sanity, source-points)
+            document.querySelectorAll('.armor-input').forEach(input => {
+                const { item, type, role } = input.dataset;
+                const key = `${item}-${type}-${role}`;
+                if (state[key] !== undefined) input.value = state[key];
+            });
+
             const mainDigitGroups = ['health', 'luck', 'sanity', 'source-points'];
             mainDigitGroups.forEach(group => {
                 const savedValue = state[`${group}-selected`];
                 if (savedValue !== null) {
                     const selectedBox = document.querySelector(`.digit-box[data-group="${group}"][data-value="${savedValue}"]`);
-                    if (selectedBox) {
-                        selectedBox.classList.add('selected');
-                    }
+                    if (selectedBox) selectedBox.classList.add('selected');
                 }
             });
 
-            // Load selected digit boxes for skill levels
-            const skillLevelGroups = [
-                'sztuka-walki', 'lucznictwo', 'pirokineza', 'hydrozofia',
-                'aeroturgia', 'geomancja', 'nekromancja', 'polimorfia'
-            ];
+            const skillLevelGroups = ['sztuka-walki', 'lucznictwo', 'pirokineza', 'hydrozofia', 'aeroturgia', 'geomancja', 'nekromancja', 'polimorfia'];
             skillLevelGroups.forEach(group => {
                 const savedValue = state[`${group}-selected`];
                 if (savedValue !== null) {
+                    const defaultBox = document.querySelector(`.digit-box[data-group="${group}"][data-value="0"]`);
+                    if(defaultBox) defaultBox.classList.remove('selected');
                     const selectedBox = document.querySelector(`.digit-box[data-group="${group}"][data-value="${savedValue}"]`);
-                    if (selectedBox) {
-                        selectedBox.classList.add('selected');
-                    }
-                } else {
-                    // If no value saved, ensure '0' is selected by default
-                    const defaultZeroBox = document.querySelector(`.digit-box[data-group="${group}"][data-value="0"]`);
-                    if (defaultZeroBox) {
-                        defaultZeroBox.classList.add('selected');
-                    }
+                    if (selectedBox) selectedBox.classList.add('selected');
                 }
             });
 
-            // Load Ekwipunek table inputs (now two columns: name and quantity)
             if (state['ekwipunek-items']) {
                 state['ekwipunek-items'].forEach((item, index) => {
                     const nameInput = document.querySelector(`input[data-item-type="name"][data-item-index="${index}"]`);
                     const quantityInput = document.querySelector(`input[data-item-type="quantity"][data-item-index="${index}"]`);
-                    if (nameInput && item.name !== undefined) {
-                        nameInput.value = item.name;
-                    }
-                    if (quantityInput && item.quantity !== undefined) {
-                        quantityInput.value = item.quantity;
-                    }
+                    if (nameInput && item.name !== undefined) nameInput.value = item.name;
+                    if (quantityInput && item.quantity !== undefined) quantityInput.value = item.quantity;
                 });
             }
 
-            // Load Skille table inputs
             if (state['skille-data']) {
                 const skilleData = state['skille-data'];
                 for (const row in skilleData) {
                     for (const col in skilleData[row]) {
-                        const input = document.querySelector(`#zdolnosci table input[data-row="${row}"][data-col="${col}"]`); // Changed ID to #zdolnosci
-                        if (input) {
-                            input.value = skilleData[row][col];
-                        }
+                        const input = document.querySelector(`#zdolnosci table input[data-row="${row}"][data-col="${col}"]`);
+                        if (input) input.value = skilleData[row][col];
                     }
                 }
             }
+
+            if (state.activeTab) {
+                const tabButton = document.querySelector(`.tab-button[onclick*="'${state.activeTab}'"]`);
+                if (tabButton) openTab({ currentTarget: tabButton }, state.activeTab);
+            }
         }
 
-        // Generate digit boxes on page load and then load saved state
         window.onload = function() {
             generateMainDigitBoxes('health-points', 'health', 0, 99);
             generateMainDigitBoxes('luck', 'luck', 0, 99);
             generateMainDigitBoxes('sanity', 'sanity', 0, 99);
-            generateMainDigitBoxes('source-points', 'source-points', 0, 20); // New: Punkty Źródła (0-20)
+            generateMainDigitBoxes('source-points', 'source-points', 0, 20);
 
-            // Generate skill level boxes (0-4)
             generateSkillLevelBoxes('sztuka-walki-level', 'sztuka-walki', 0, 4);
             generateSkillLevelBoxes('lucznictwo-level', 'lucznictwo', 0, 4);
             generateSkillLevelBoxes('pirokineza-level', 'pirokineza', 0, 4);
@@ -912,7 +1052,22 @@
             generateSkillLevelBoxes('nekromancja-level', 'nekromancja', 0, 4);
             generateSkillLevelBoxes('polimorfia-level', 'polimorfia', 0, 4);
 
-            loadState(); // Load state after all elements are generated and default selections are made
+            loadState();
+            
+            document.querySelectorAll('#uzbrojenie input').forEach(input => {
+                input.addEventListener('input', () => {
+                    if (input.classList.contains('armor-input')) {
+                        validateArmorInput(input);
+                    } else {
+                        saveState();
+                    }
+                });
+            });
+
+            document.getElementById('reduce-armor-btn').addEventListener('click', reduceArmor);
+
+            calculateTotalArmor();
         };
     </script>
+</body>
 </html>
