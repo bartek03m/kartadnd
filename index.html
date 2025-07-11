@@ -58,7 +58,7 @@
         .tab-content.active {
             display: block;
         }
-        /* Removed .attribute-input fixed width, now handled by Tailwind's w-full */
+        
         .digits-group {
             display: flex;
             gap: 0.25rem; /* Small gap between digit boxes */
@@ -168,14 +168,30 @@
         
         .armor-value-group {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             gap: 0.25rem;
         }
         .armor-value-group input {
-            width: 4rem;
-            text-align: center;
+             width: 100%;
+        }
+        
+        /* NEW: Styles for labels above armor inputs */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .input-group label {
+            font-size: 0.75rem; /* 12px */
+            font-weight: 500;
+            color: #6b7280; /* gray-500 */
         }
 
+        /* =================================== */
+        /* == RESPONSIVE STYLES START HERE == */
+        /* =================================== */
+
+        /* Medium screens (tablets, large phones) */
         @media (max-width: 768px) {
             .character-sheet-container {
                 margin: 10px; /* Smaller margin on mobile */
@@ -193,14 +209,76 @@
             h3 { font-size: 1.1rem; }
             .tab-button { padding: 0.75rem 1rem; font-size: 0.9rem; }
             .digit-box { width: 1.2rem; height: 1.2rem; font-size: 0.75rem; }
-            /* Adjusted size for skill level digit boxes to prevent wrapping */
             .skill-level-group .digit-box {
-                width: 1rem; /* Reduced width */
-                height: 1rem; /* Reduced height */
-                font-size: 0.65rem; /* Adjusted font size */
+                width: 1rem; 
+                height: 1rem;
+                font-size: 0.65rem;
             }
             .data-table th, .data-table td { padding: 0.5rem; }
+
+            /* Make armor grid stack */
+            #uzbrojenie .grid-cols-5 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            #uzbrojenie .grid-cols-5 > div:first-child {
+                grid-column: span 2 / span 2;
+            }
         }
+
+        /* Small screens (most phones) */
+        @media (max-width: 480px) {
+            .tab-content {
+                padding: 1rem;
+            }
+            h2 { font-size: 1.25rem; }
+            h3 { font-size: 1rem; }
+            
+            /* Stack character info and attributes */
+            .grid-cols-1.md\:grid-cols-2, .grid-cols-2.sm\:grid-cols-3 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+
+            /* Stack health/luck/sanity/source points */
+            .grid-cols-1.md\:grid-cols-4 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            /* Stack skills */
+            #umiejetnosci .grid-cols-1.md\:grid-cols-2 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+            .skill-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+            .skill-item label {
+                width: auto;
+            }
+            .skill-level-group {
+                margin-left: 0;
+            }
+
+            /* Stack all armor grid items */
+            #uzbrojenie .grid-cols-5 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+            #uzbrojenie .grid-cols-5 > div:first-child {
+                grid-column: span 1 / span 1;
+            }
+            .armor-value-group {
+                justify-content: space-between;
+            }
+            .armor-value-group .input-wrapper {
+                width: calc(50% - 0.5rem);
+            }
+
+            /* Stack weapon inputs */
+            #uzbrojenie .grid-cols-2.gap-2 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -217,7 +295,7 @@
         <!-- Tab Content: Informacje -->
         <div id="informacje" class="tab-content active">
             <!-- Section: Informacje o Postaci -->
-            <div class="mb-8"> <!-- Added margin-bottom for separation -->
+            <div class="mb-8">
                 <h2 class="text-2xl font-bold mb-6 text-gray-800">Informacje o Postaci</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -240,9 +318,9 @@
             </div>
 
             <!-- Section: Cechy -->
-            <div class="mb-8"> <!-- Added margin-bottom for separation -->
+            <div class="mb-8">
                 <h2 class="text-2xl font-bold mb-6 text-gray-800">Cechy</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"> <!-- Adjusted grid for attributes -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                     <div class="flex flex-col items-center">
                         <label for="sila" class="text-sm font-medium text-gray-700 mb-1">SIŁ</label>
                         <input type="number" id="sila" class="attribute-input p-2 border border-gray-300 rounded-md text-center focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" min="0" max="99" oninput="saveState()">
@@ -266,8 +344,8 @@
                 </div>
             </div>
 
-            <!-- Health, Luck, Sanity, and now Punkty Źródła -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6"> <!-- Adjusted to 4 columns for the new field -->
+            <!-- Health, Luck, Sanity, and Punkty Źródła -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>
                     <h3 class="text-lg font-semibold mb-3 text-gray-800">Punkty Zdrowia:</h3>
                     <div id="health-points" class="digits-group" data-group="health">
@@ -321,7 +399,7 @@
 
             <!-- Armor Pieces -->
             <div class="space-y-4 mb-8">
-                <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center font-medium text-gray-500 text-sm">
+                <div class="hidden sm:grid grid-cols-1 sm:grid-cols-5 gap-4 items-center font-medium text-gray-500 text-sm">
                     <div class="sm:col-span-2">Element</div>
                     <div>Pancerz Fizyczny</div>
                     <div>Pancerz Magiczny</div>
@@ -330,17 +408,30 @@
                 <!-- Headwear -->
                 <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
                     <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:hidden">Nakrycie Głowy</label>
                         <input type="text" id="headwear-name" placeholder="Nakrycie Głowy" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="headwear" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="headwear" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                         <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Akt.</label>
+                            <input type="number" data-item="headwear" data-type="phys" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                        <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Max</label>
+                            <input type="number" data-item="headwear" data-type="phys" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="headwear" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="headwear" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Akt.</label>
+                            <input type="number" data-item="headwear" data-type="mag" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                         <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Max</label>
+                            <input type="number" data-item="headwear" data-type="mag" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="flex gap-1">
                         <button onclick="repairArmorType('headwear', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
@@ -350,17 +441,30 @@
                 <!-- Chest -->
                  <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
                     <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:hidden">Klatka Piersiowa</label>
                         <input type="text" id="chest-name" placeholder="Klatka Piersiowa" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="chest" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="chest" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                         <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Akt.</label>
+                            <input type="number" data-item="chest" data-type="phys" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                        <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Max</label>
+                            <input type="number" data-item="chest" data-type="phys" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="chest" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="chest" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Akt.</label>
+                            <input type="number" data-item="chest" data-type="mag" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                         <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Max</label>
+                            <input type="number" data-item="chest" data-type="mag" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="flex gap-1">
                         <button onclick="repairArmorType('chest', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
@@ -370,17 +474,30 @@
                 <!-- Pants -->
                 <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
                     <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:hidden">Spodnie</label>
                         <input type="text" id="pants-name" placeholder="Spodnie" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="pants" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="pants" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                         <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Akt.</label>
+                            <input type="number" data-item="pants" data-type="phys" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                        <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Max</label>
+                            <input type="number" data-item="pants" data-type="phys" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="pants" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="pants" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Akt.</label>
+                            <input type="number" data-item="pants" data-type="mag" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                         <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Max</label>
+                            <input type="number" data-item="pants" data-type="mag" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="flex gap-1">
                         <button onclick="repairArmorType('pants', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
@@ -390,17 +507,30 @@
                 <!-- Boots -->
                 <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
                     <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:hidden">Buty</label>
                         <input type="text" id="boots-name" placeholder="Buty" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="boots" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="boots" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                         <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Akt.</label>
+                            <input type="number" data-item="boots" data-type="phys" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                        <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Max</label>
+                            <input type="number" data-item="boots" data-type="phys" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="boots" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="boots" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Akt.</label>
+                            <input type="number" data-item="boots" data-type="mag" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                         <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Max</label>
+                            <input type="number" data-item="boots" data-type="mag" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="flex gap-1">
                         <button onclick="repairArmorType('boots', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
@@ -410,17 +540,30 @@
                 <!-- Necklace -->
                 <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
                     <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:hidden">Naszyjnik</label>
                         <input type="text" id="necklace-name" placeholder="Naszyjnik" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="necklace" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="necklace" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                         <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Akt.</label>
+                            <input type="number" data-item="necklace" data-type="phys" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                        <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Max</label>
+                            <input type="number" data-item="necklace" data-type="phys" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="necklace" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="necklace" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Akt.</label>
+                            <input type="number" data-item="necklace" data-type="mag" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                         <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Max</label>
+                            <input type="number" data-item="necklace" data-type="mag" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="flex gap-1">
                         <button onclick="repairArmorType('necklace', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
@@ -430,17 +573,30 @@
                 <!-- Ring -->
                 <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-center">
                     <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:hidden">Pierścień</label>
                         <input type="text" id="ring-name" placeholder="Pierścień" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="ring" data-type="phys" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="ring" data-type="phys" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                         <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Akt.</label>
+                            <input type="number" data-item="ring" data-type="phys" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                        <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Fiz. Max</label>
+                            <input type="number" data-item="ring" data-type="phys" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="armor-value-group">
-                        <input type="number" data-item="ring" data-type="mag" data-role="current" placeholder="Akt." min="0" class="p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
-                        <span class="px-2 py-2 bg-gray-100 border-t border-b border-gray-300 text-gray-500">/</span>
-                        <input type="number" data-item="ring" data-type="mag" data-role="max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Akt.</label>
+                            <input type="number" data-item="ring" data-type="mag" data-role="current" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
+                         <span class="pb-2 text-gray-400">/</span>
+                        <div class="input-wrapper">
+                            <label class="block text-xs font-medium text-gray-600">Mag. Max</label>
+                            <input type="number" data-item="ring" data-type="mag" data-role="max" min="0" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm armor-input">
+                        </div>
                     </div>
                     <div class="flex gap-1">
                         <button onclick="repairArmorType('ring', 'phys')" class="px-2 py-1 text-xs bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600" title="Napraw pancerz fizyczny">Fiz.</button>
@@ -453,12 +609,18 @@
             <div class="mt-8 pt-6 border-t border-gray-200">
                 <h3 class="text-lg font-semibold mb-4 text-gray-800">Redukcja Pancerza</h3>
                 <div class="flex flex-wrap items-center gap-4 p-4 bg-gray-50 rounded-lg">
-                    <input type="number" id="reduce-armor-amount" placeholder="Ilość do odjęcia" min="1" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
-                    <select id="reduce-armor-type" class="p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
-                        <option value="physical">Pancerz Fizyczny</option>
-                        <option value="magical">Pancerz Magiczny</option>
-                    </select>
-                    <button id="reduce-armor-btn" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Odejmij Pancerz</button>
+                    <div class="flex-grow">
+                        <label for="reduce-armor-amount" class="block text-sm font-medium text-gray-700 mb-1">Ilość do odjęcia</label>
+                        <input type="number" id="reduce-armor-amount" min="1" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                    </div>
+                    <div class="flex-grow">
+                        <label for="reduce-armor-type" class="block text-sm font-medium text-gray-700 mb-1">Typ pancerza</label>
+                        <select id="reduce-armor-type" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                            <option value="physical">Pancerz Fizyczny</option>
+                            <option value="magical">Pancerz Magiczny</option>
+                        </select>
+                    </div>
+                    <button id="reduce-armor-btn" class="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 self-end">Odejmij</button>
                 </div>
             </div>
 
@@ -466,21 +628,33 @@
             <div class="mt-8 pt-6 border-t border-gray-200">
                  <h3 class="text-lg font-semibold mb-4 text-gray-800">Broń</h3>
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Broń 1:</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="weapon1-name" placeholder="Nazwa" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
-                            <input type="text" id="weapon1-damage" placeholder="Obrażenia" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Broń 2:</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="weapon2-name" placeholder="Nazwa" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
-                            <input type="text" id="weapon2-damage" placeholder="Obrażenia" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
-                        </div>
-                    </div>
-                </div>
+                     <div>
+                         <label class="block text-sm font-medium text-gray-700 mb-1">Broń 1:</label>
+                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                             <div>
+                                 <label for="weapon1-name" class="block text-xs font-medium text-gray-600">Nazwa</label>
+                                 <input type="text" id="weapon1-name" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                             </div>
+                             <div>
+                                 <label for="weapon1-damage" class="block text-xs font-medium text-gray-600">Obrażenia</label>
+                                 <input type="text" id="weapon1-damage" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                             </div>
+                         </div>
+                     </div>
+                     <div>
+                         <label class="block text-sm font-medium text-gray-700 mb-1">Broń 2:</label>
+                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                             <div>
+                                 <label for="weapon2-name" class="block text-xs font-medium text-gray-600">Nazwa</label>
+                                 <input type="text" id="weapon2-name" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                             </div>
+                             <div>
+                                 <label for="weapon2-damage" class="block text-xs font-medium text-gray-600">Obrażenia</label>
+                                 <input type="text" id="weapon2-damage" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" oninput="saveState()">
+                             </div>
+                         </div>
+                     </div>
+                 </div>
             </div>
         </div>
 
@@ -492,7 +666,7 @@
                 <!-- Skills with number input (0-99) - Left Column (11 items) -->
                 <div class="space-y-3">
                     <div class="skill-item">
-                        <label for="celnosc" class="text-gray-700 w-32">Celność (20)</label>
+                        <label for="celnosc" class="text-gray-700 w-32">Celność (30)</label>
                         <input type="number" id="celnosc" class="skill-input" min="0" max="99" oninput="saveState()">
                     </div>
                     <div class="skill-item">
